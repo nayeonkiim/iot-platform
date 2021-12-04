@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Chart.js Introduction</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script>
+        function create_pTag() {
+            let removeArea = document.getElementById('chart');
+            if (removeArea != null)
+                removeArea.remove();
+
+            let tagArea = document.getElementById('tagArea');
+            let new_pTag = document.createElement('canvas');
+
+            new_pTag.setAttribute('id', 'chart');
+            new_pTag.setAttribute('width', '800px');
+            new_pTag.setAttribute('height', '400px');
+
+            tagArea.appendChild(new_pTag);
+            const app = {
+                canvasContext: document.getElementById('chart').getContext('2d')
+            };
+
+
+            line(app, "daily");
+        }
+
+        function create_pTag2() {
+            let removeArea = document.getElementById('chart');
+            if (removeArea != null)
+                removeArea.remove();
+
+            let tagArea = document.getElementById('tagArea');
+            let new_pTag = document.createElement('canvas');
+
+            new_pTag.setAttribute('id', 'chart');
+            new_pTag.setAttribute('width', '800px');
+            new_pTag.setAttribute('height', '400px');
+
+            tagArea.appendChild(new_pTag);
+            const app = {
+                canvasContext: document.getElementById('chart').getContext('2d')
+            };
+
+
+            line(app, "week");
+        }
+
+    </script>
+
+    <head>
+
+    <body>
+        <div style="width: 800px; height: 400px;">
+            <input type="button" value="하루온도및습도" onclick="create_pTag();">
+            <input type="button" value="일주일간온도및습도" onclick="create_pTag2();">
+            <div id="tagArea">
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js"></script>
+        <script src="chartdefaults.js" type="text/javascript"></script>
+        <script src="chartjscolors.js" type="text/javascript"></script>
+        <script src="chartdata.js" type="text/javascript"></script>
+        <script src="chartjsintro.js" type="text/javascript"></script>
+
+<body>
+
+
+</html>
