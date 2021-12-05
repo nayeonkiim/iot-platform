@@ -1,24 +1,4 @@
-/*
-  AWS IoT WiFi
 
-  This sketch securely connects to an AWS IoT using MQTT over WiFi.
-  It uses a private key stored in the ATECC508A and a public
-  certificate for SSL/TLS authetication.
-
-  It publishes a message every 5 seconds to arduino/outgoing
-  topic and subscribes to messages on the arduino/incoming
-  topic.
-
-  The circuit:
-  - Arduino MKR WiFi 1010 or MKR1000
-
-  The following tutorial on Arduino Project Hub can be used
-  to setup your AWS account and the MKR board:
-
-  https://create.arduino.cc/projecthub/132016/securely-connecting-an-arduino-mkr-wifi-1010-to-aws-iot-core-a9f365
-
-  This example code is in the public domain.
-*/
 
 #include <ArduinoBearSSL.h>
 #include <ArduinoECCX08.h>
@@ -31,10 +11,9 @@
 #define DHTTYPE DHT11   // DHT 11
 DHT dht(DHTPIN, DHTTYPE);
 
-#define LED_1_PIN 3
+
 #include <ArduinoJson.h>
-#include "Led.h"
-float t=0;
+
 
 /////// Enter your sensitive data in arduino_secrets.h
 const char ssid[]        = SECRET_SSID;
@@ -48,7 +27,6 @@ MqttClient    mqttClient(sslClient);
 
 unsigned long lastMillis = 0;
 
-Led led1(LED_1_PIN);
 
 void setup() {
 
@@ -94,7 +72,6 @@ void loop() {
 
   // poll for new MQTT messages and send keep alives
   mqttClient.poll();
-  t=dht.readTemperature();
   // publish a message roughly every 5 seconds.
   if (millis() - lastMillis > 5000) {
     lastMillis = millis();
@@ -102,11 +79,11 @@ void loop() {
     getDeviceStatus(payload);
     sendMessage(payload);
   }
- 
+
 }
 
 unsigned long getTime() {
-  // get the current time from the WiFi module  
+  // get the current time from the WiFi module
   return WiFi.getTime();
 }
 
@@ -148,18 +125,19 @@ void connectMQTT() {
 void getDeviceStatus(char* payload) {
   // Read temperature as Celsius (the default)
   float t = dht.readTemperature();
-
+  float h = dht.readHumidity();
+//온습도에 출력되는 온도,습도값을 저장하기 위한 float함수 t,h 선언
   // Read led status
-  const char* led = (led1.getState() == LED_ON)? "ON" : "OFF";
+  const char* led = (led1.getState() == LED_ON) ? "ON" : "OFF";
 
   // make payload for the device update topic ($aws/things/MyMKRWiFi1010/shadow/update)
-  sprintf(payload,"  ",t,led);
- 
+  sprintf(payload, "{\"state\":{\"reported\":{\"temperature\":\"%0.2f\",\"humidity\":\"%0.2f\"}}}", t, h);
+  //온도와 습도를 읽은 값을 시리얼모니터에 출력
 }
 
 void sendMessage(char* payload) {
-  char TOPIC_NAME[]= "$aws/things/MyMKRWiFi1010/shadow/update";
-  
+  char TOPIC_NAME[] = "$aws/things/MyMKRWiFi1010/shadow/update";
+
   Serial.print("Publishing send message:");
   Serial.println(payload);
   mqttClient.beginMessage(TOPIC_NAME);
@@ -178,48 +156,20 @@ void onMessageReceived(int messageSize) {
 
   // store the message received to the buffer
   char buffer[512] ;
-  int count=0;
+  int count = 0;
   while (mqttClient.available()) {
-     buffer[count++] = (char)mqttClient.read();
+    buffer[count++] = (char)mqttClient.read();
   }
-  buffer[count]='\0'; // 버퍼의 마지막에 null 캐릭터 삽입
+  buffer[count] = '\0'; // 버퍼의 마지막에 null 캐릭터 삽입
   Serial.println(buffer);
   Serial.println();
 
-  // JSon 형식의 문자열인 buffer를 파싱하여 필요한 값을 얻어옴.
-  // 디바이스가 구독한 토픽이 $aws/things/MyMKRWiFi1010/shadow/update/delta 이므로,
-  // JSon 문자열 형식은 다음과 같다.
-  // {
-  //    "version":391,
-  //    "timestamp":1572784097,
-  //    "state":{
-  //        "LED":"ON"
-  //    },
-  //    "metadata":{
-  //        "LED":{
-  //          "timestamp":15727840
-  //         }
-  //    }
-  // }
-  //
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, buffer);
   JsonObject root = doc.as<JsonObject>();
   JsonObject state = root["state"];
-  const char* led = state["LED"];
   Serial.println(led);
-  
+
   char payload[512];
-  
-  if (strcmp(led,"ON")==0) {
-    led1.on();
-    sprintf(payload,"{\"state\":{\"reported\":{\"LED\":\"%s\"}}}","ON");
-    sendMessage(payload);
-    
-  } else if (strcmp(led,"OFF")==0) {
-    led1.off();
-    sprintf(payload,"{\"state\":{\"reported\":{\"LED\":\"%s\"}}}","OFF");
-    sendMessage(payload);
-  }
- 
+
 }
