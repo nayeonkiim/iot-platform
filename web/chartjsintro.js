@@ -53,7 +53,7 @@ var invokeAPILine = function (arr, app) {
 
     // 디바이스 조회 URI
     // prod 스테이지 편집기의 맨 위에 있는 "호출 URL/devices"로 대체해야 함
-    var API_URI = 'your api';
+    var API_URI = 'https://ra32sl0gc1.execute-api.ap-northeast-2.amazonaws.com/prod/devices/DeviceData/log?from=' + arr[0] + '&to=' + arr[1];
 
     axios.get(API_URI)
         .then(response => {
@@ -131,8 +131,7 @@ var invokeAPILine = function (arr, app) {
                                     size: 12,
                                     family: "'Noto Sans KR', sans-serif",
                                     weight: 300,
-                                },
-                                text: '단위: 배'
+                                }
                             }
                         }
                     },
@@ -142,7 +141,7 @@ var invokeAPILine = function (arr, app) {
                         title:
                         {
                             display: true,
-                            text: '농작물 알맞은 온습도조회 (\u00B0C)'
+                            text: '온습도'
                         }
                     }
                 }
@@ -159,7 +158,7 @@ var invokeAPIBar = function (arr, app) {
 
     // 디바이스 조회 URI
     // prod 스테이지 편집기의 맨 위에 있는 "호출 URL/devices"로 대체해야 함
-    var API_URI = 'your api';
+    var API_URI = 'https://ra32sl0gc1.execute-api.ap-northeast-2.amazonaws.com/prod/devices/DeviceData/log?from=' + arr[0] + '&to=' + arr[1];
 
     axios.get(API_URI)
         .then(response => {
@@ -170,40 +169,38 @@ var invokeAPIBar = function (arr, app) {
                 humidity: [],
             };
 
-            console.log("response: " + response.data);
             var result = JSON.parse(response.data);
             var jsonDatas = [];
             for (var i in result.data) {
                 jsonDatas.push(result.data[i]);
             }
 
-            console.log(jsonDatas);
             jsonDatas.sort(function (a, b) {
                 return Date.parse(a.timestamp) - Date.parse(b.timestamp);
             });
-
+            
             var avgArr = [];
             var count = 0;
             var avg = 0;
             var beforeDate;
             var avgDate = [];
             
-            for(var k=0; k < avgArr.size(); k++) {
-                var mydate = chartData.datas[k].timestamp.split(' ')[0];
+            for(var k=0; k < jsonDatas.length; k++) {
+                var mydate = jsonDatas[k].timestamp.split(' ')[0];
                 if(k != 0 && mydate == beforeDate) {
-                    avg += chartData.datas[k].temperature;
+                    avg += parseInt(jsonDatas[k].temperature);
                     count += 1;
                 }else{
                     if(k !=0) {
                         avgArr.push(avg/count);
                         avgDate.push(beforeDate);
                     }
-                    avg = charData.datas[k].temperature;
+                    avg = parseInt(jsonDatas[k].temperature);
                     count = 1;
                     beforeDate = mydate;
                 }
 
-                if(k == avgArr.size()-1) {
+                if(k == jsonDatas.length-1) {
                     avgArr.push(avg/count);
                     avgDate.push(mydate);
                 }
@@ -221,7 +218,7 @@ var invokeAPIBar = function (arr, app) {
                     type: 'bar',
                     data:
                     {
-                        labels: chartData.countryPopulations.countries,
+                        labels: chartData.datas.timestamp,
                         datasets: [{
                             label: 'temperature',
                             backgroundColor: chartjsColors.maxTempLine,
@@ -236,7 +233,7 @@ var invokeAPIBar = function (arr, app) {
                         plugins:
                         {
                             legend: { display: false, },
-                            title: { display: true, text: 'Population (millions)' }
+                            title: { display: true, text: '평균 온도'}
                         },
                         // indexAxis: 'y',
                         scales: { y: { beginAtZero: true } }

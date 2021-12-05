@@ -10,8 +10,12 @@
     <script>
         function create_pTag() {
             let removeArea = document.getElementById('chart');
+            let removeArea2 = document.getElementById('chart2');
+            
             if (removeArea != null)
                 removeArea.remove();
+            if (removeArea2 != null)
+                removeArea2.remove(); 
 
             let tagArea = document.getElementById('tagArea');
             let new_pTag = document.createElement('canvas');
@@ -31,9 +35,12 @@
 
         function create_pTag2() {
             let removeArea = document.getElementById('chart');
+            let removeArea2 = document.getElementById('chart2');
             
             if (removeArea != null)
                 removeArea.remove();
+            if (removeArea2 != null)
+                removeArea2.remove();    
 
             let tagArea = document.getElementById('tagArea');
             let new_pTag = document.createElement('canvas');
@@ -43,7 +50,7 @@
             new_pTag.setAttribute('height', '400px');
 
             let new_pTage2 = document.createElement('canvas');
-            new_pTage2.setAttribute('id', 'chart');
+            new_pTage2.setAttribute('id', 'chart2');
             new_pTage2.setAttribute('width', '800px');
             new_pTage2.setAttribute('height', '400px');
 
@@ -55,11 +62,11 @@
             line(app, "week");
 
 
-            tagArea.appendChild(new_pTag);
-            const app = {
-                canvasContext: document.getElementById('chart').getContext('2d')
+            tagArea.appendChild(new_pTage2);
+            const app2 = {
+                canvasContext: document.getElementById('chart2').getContext('2d')
             };
-            bar(app, "week");
+            bar(app2, "week");
         }
 
     </script>
@@ -67,6 +74,7 @@
     <head>
 
     <body>
+        <h2>농작물 수확 온습도 그래프</h2>
         <div style="width: 800px; height: 400px;">
             <input type="button" value="하루온도및습도" onclick="create_pTag();">
             <input type="button" value="일주일간온도및습도" onclick="create_pTag2();">
