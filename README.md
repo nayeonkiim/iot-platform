@@ -13,5 +13,7 @@
 - DynamoDB <br/>
 - AWS IoT Core <br/>
 - MKRWiFi1010 <br/>
+- 웹 구현 : chart.js
 
 ## 서비스 시연
+[시연영상](https://youtu.be/NCDSPUuN_w0)
