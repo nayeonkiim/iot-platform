@@ -7,11 +7,11 @@
 
 ## 구조도
 <img width="513" alt="구조도" src="https://user-images.githubusercontent.com/61819669/144732795-47d20a51-500b-4c6d-a9a3-8bf97df44846.png">
-- AWS Lambda
-- AWS API gateway
-- AWS SNS
-- DynamoDB
-- AWS IoT Core
-- MKRWiFi1010
+- AWS Lambda <br/>
+- AWS API gateway <br/>
+- AWS SNS <br/>
+- DynamoDB <br/>
+- AWS IoT Core <br/>
+- MKRWiFi1010 <br/>
 
 ## 서비스 시연
